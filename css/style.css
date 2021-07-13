@@ -6,11 +6,12 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
     
     background-color: rgb(32, 32, 32);
     background-image: url('../images/background.jpg');
     background-position: center;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-size: cover;
     background-attachment: fixed;
 }
@@ -70,3 +71,7 @@ body {
     margin: 10px;
 }
 
+.header {
+    display: flex;
+    justify-content: center;
+}
