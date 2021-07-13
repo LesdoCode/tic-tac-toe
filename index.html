@@ -12,7 +12,9 @@
         <link rel="stylesheet" href="css/layout.css"/>
     </head>
     <body>
-
+        <div class="header">
+            <h1>Tic-Tac-Toe</h1>
+        </div>
         <div id="buttons" class="grid-container shadow">
             <div id='1' class="block"></div>
             <div id='2' class="block"></div>
@@ -23,6 +25,11 @@
             <div id='7' class="block"></div>
             <div id='8' class="block"></div>
             <div id='9' class="block"></div>
+        </div>
+        <div id="gameControls" class="game-controls">
+                <div id='btnUndo' class="undo game-control">Undo</div>
+                <div id='btnNewGame' class="undo game-control">New game</div>
+                <div id='btnRedo' class="undo game-control">Redo</div>
         </div>
         
         <script src="scripts/main.js"></script>

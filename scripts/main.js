@@ -1,7 +1,10 @@
 let grid = document.querySelector('#buttons');
-let currentChar = "X";
-let currentGrid; 
+let gameControls = document.querySelector('#gameControls');
 
+let currentChar = "X";
+let currentGrid;
+let playedMoves = [];
+let undoneMoves = [];
 
 const winningCombinations = [
     //up and accross
@@ -11,12 +14,11 @@ const winningCombinations = [
     [0,4,8],[2,4,6]
 ];
 
+
 function startNewMatch() {
     let button;
 
-    currentGrid = [
-        [0,0,0,0,0,0,0,0,0]
-    ];
+    currentGrid = [0,0,0,0,0,0,0,0,0];
 
     for(element of document.querySelector('#buttons').children){
         button = document.getElementById(element.id);
@@ -29,8 +31,8 @@ function getPlayChar(){
     return currentChar;
 }
 
-function updateCurrentGrid(id) {
-    currentGrid[parseInt(id) -1] = currentChar;
+function updateCurrentGrid(buttonId) {
+    currentGrid[parseInt(buttonId) -1] = currentChar;
 }
 
 function evaluateGrid(_currentGrid) {
@@ -47,21 +49,73 @@ function evaluateGrid(_currentGrid) {
 }
 
 function isDraw(_currentGrid) {
-    for (let char of _currentGrid)
-        if (char != 'X' && char != "O")
-            return false;
-
-    return true;
+    console.log(_currentGrid)
+    return (!_currentGrid.includes(0)); 
 }
 
+function playMove(_button) {
+    const buttonId = _button.id;
+    const currentPlayChar = getPlayChar();
+    _button.innerHTML = currentPlayChar;
+
+    updateCurrentGrid(buttonId);
+
+    const move ={
+        playChar: currentPlayChar,
+        gridPosition: (parseInt(buttonId) -1)
+    }
+    playedMoves.push(move);
+}
+
+function playSpecificMove(_playChar, gridPosition, _currentGrid) {
+    const buttonId = (gridPosition + 1).toString();    
+    const button = document.getElementById(buttonId);
+
+    button.innerHTML = _playChar;
+    _currentGrid[gridPosition] = _playChar;
+
+    const move = {
+        playChar: _playChar,
+        gridPosition: gridPosition
+    }
+    undoneMoves.push(move);
+}
+
+function blankButton(buttonId) {
+    //returns a button to blank state on the UI.
+    document.getElementById(buttonId).innerHTML = "";
+}
+
+function undoMove() {
+    if (playedMoves.length === 0) return;
+
+    const move = playedMoves.pop();
+
+    currentGrid[move.gridPosition] = 0;
+    blankButton((move.gridPosition + 1).toString());
+
+    undoneMoves.push(move);
+}
+
+function redoMove() {
+    if (undoneMoves.length == 0) return;
+    const move = undoneMoves.pop();
+    
+    playSpecificMove(
+        move.playChar,
+        move.gridPosition,
+        currentGrid
+    )
+}
+
+//Event listeners
 grid.addEventListener('click', function(e){
     if(e.target !== e.currentTarget){
         let clickedButtonId = e.target.id;
         const button = document.getElementById(clickedButtonId);
 
         if(button.innerHTML == ''){
-            button.innerHTML = getPlayChar();
-            updateCurrentGrid(button.id);
+            playMove(button);
 
             const evaluation = evaluateGrid(currentGrid);
 
@@ -79,5 +133,23 @@ grid.addEventListener('click', function(e){
     }
 })
 
+gameControls.addEventListener('click', function(e) {
+    if (e.target !== e.currentTarget){
+        let clickedButtonId = e.target.id;
 
+        switch (clickedButtonId){
+            case 'btnUndo':
+                undoMove();
+                break;
+            case 'btnNewGame':
+                startNewMatch();
+                break;
+            case 'btnRedo':
+                redoMove();
+                break;
+        }
+    }
+})
+
+//Start
 startNewMatch();
